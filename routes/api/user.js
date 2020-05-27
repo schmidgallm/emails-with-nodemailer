@@ -9,6 +9,9 @@ const router = express.Router();
 // Import Models
 const User = require('../../models/User');
 
+// Import welcome email controller
+const welcomeEmail = require('../../controllers/welcomeEmail');
+
 /*
 // -----------
 // POST and PUT Routes
@@ -64,6 +67,9 @@ router.post(
 
       // save new user to db
       await user.save();
+
+      // send welcome email
+      await welcomeEmail(user.email, user.first_name);
     } catch (err) {
       console.warn(err.message);
       res.status(500).send('Server Error...');
