@@ -9,8 +9,9 @@ const router = express.Router();
 // Import Models
 const User = require('../../models/User');
 
-// Import welcome email controller
-const welcomeEmail = require('../../controllers/welcomeEmail');
+// Import email controllers
+const subscribe = require('../../controllers/subscribe');
+const unsubscribe = require('../../controllers/unsubscribe');
 
 /*
 // -----------
@@ -25,10 +26,12 @@ router.post(
   '/',
   // express validator checks
   [
-    check('user_name', 'User name is required')
+    check('first_name', 'First name is required')
       .not()
       .isEmpty(),
-    check('status', 'Status is required'),
+    check('last_name', 'First name is required')
+      .not()
+      .isEmpty(),
     check('email', 'Please include valid email').isEmail(),
     check('password', 'password must be more than 6 characters').isLength({
       min: 6
@@ -68,8 +71,8 @@ router.post(
       // save new user to db
       await user.save();
 
-      // send welcome email
-      await welcomeEmail(user.email, user.first_name);
+      // send welcome email and pass in users email, first name, and response
+      await subscribe(user.email, user.first_name, res);
     } catch (err) {
       console.warn(err.message);
       res.status(500).send('Server Error...');
@@ -97,7 +100,8 @@ router.delete('/:id', async (req, res) => {
   // delete user from db
   await user.remove();
 
-  return res.status(200).json({ message: 'User succesfully deleted' });
+  // send succesful unsibsribe message and pass in users email, first name, and response
+  await unsubscribe(user.email, user.first_name, res);
 });
 
 module.exports = router;

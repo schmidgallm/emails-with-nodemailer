@@ -2,7 +2,7 @@
 const dotenv = require('dotenv').config();
 const nodemailer = require('nodemailer');
 
-const welcomeEmail = async (eamilTo, user) => {
+const subscribe = async (eamilTo, user, res) => {
   try {
     // create mail transporter
     // This is configed for gmail -- see docs for different providers
@@ -27,12 +27,18 @@ const welcomeEmail = async (eamilTo, user) => {
     // init response
     const response = await transporter.sendMail(mailOptions);
 
-    console.log(response);
+    // if unable to send email
+    if (!response) {
+      return res.status(535).json({ msg: 'Mailbox undeliverable' });
+    }
+
+    return res.status(200).json({
+      message: 'Email sent succesfully',
+      messageId: response.messageId
+    });
   } catch (err) {
     console.log(err);
   }
 };
 
-welcomeEmail('schmidgallm@outlook.com', 'Michaeal');
-
-module.exports = welcomeEmail;
+module.exports = subscribe;
