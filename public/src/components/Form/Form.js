@@ -1,22 +1,30 @@
 import React, { useState, Fragment } from 'react';
 import { register } from '../../utils/register';
+import Loading from '../Loading';
 import './Form.css';
 
 const Form = () => {
-  // init state
+  // init form state
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     email: ''
   });
 
+  // init message state
   const [msg, setMsg] = useState({
     message: ''
+  });
+
+  // init loading state
+  const [loading, setLoading] = useState({
+    load: false
   });
 
   // destructure state
   const { first_name, last_name, email } = formData;
   const { message } = msg;
+  const { load } = loading;
 
   // on change handler
   const onChange = e =>
@@ -26,9 +34,16 @@ const Form = () => {
   const onSubmit = async e => {
     e.preventDefault();
 
+    // init loading message
+    setLoading({ ...loading, loading: true });
+
     // submit form to api route
     const request = await register(first_name, last_name, email);
     const response = await request;
+
+    if (response) {
+      setLoading({ ...loading, loading: false });
+    }
 
     // set message and remove after timeout
     setMsg({ ...msg, message: response.data.message });
@@ -83,9 +98,11 @@ const Form = () => {
           />
         </div>
         <button type="submit" className="btn btn-warning">
-          Get Email
+          Send Email
         </button>
       </form>
+
+      <div className="loading">{load ? <Loading /> : null}</div>
     </Fragment>
   );
 };
