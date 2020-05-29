@@ -32,13 +32,11 @@ router.post(
     check('last_name', 'First name is required')
       .not()
       .isEmpty(),
-    check('email', 'Please include valid email').isEmail(),
-    check('password', 'password must be more than 6 characters').isLength({
-      min: 6
-    })
+    check('email', 'Please include valid email').isEmail()
   ],
   async (req, res) => {
     try {
+      console.log('made it');
       // if errors from validation exists
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -46,7 +44,7 @@ router.post(
       }
 
       // req.body destructure
-      const { first_name, last_name, email, password } = req.body;
+      const { first_name, last_name, email } = req.body;
 
       // check if user exists
       let user = await User.findOne({ email });
@@ -60,13 +58,8 @@ router.post(
       user = await new User({
         first_name,
         last_name,
-        email,
-        password
+        email
       });
-
-      // salt password
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
 
       // save new user to db
       await user.save();
