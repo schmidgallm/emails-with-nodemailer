@@ -4,9 +4,13 @@
   "description": "node app sending emails via nodemailer",
   "main": "server/index.js",
   "scripts": {
-    "start": "node server/index.js",
-    "dev": "nodemon server/index.js",
-    "email": "node controllers/welcomeEmail.js"
+    "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
+    "start:prod": "node server/index.js",
+    "start:dev": "concurrently \"nodemon --ignore 'public/*'\" \"npm run public\"",
+    "public": "cd public && npm run start",
+    "install": "cd public && npm install",
+    "build": "cd public && npm run build",
+    "heroku-postbuild": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -15,7 +19,8 @@
   "keywords": [
     "node",
     "nodemailer",
-    "mongodb"
+    "mongodb",
+    "react"
   ],
   "author": "Michael Schmidgall",
   "license": "MIT",
@@ -26,10 +31,12 @@
   "dependencies": {
     "axios": "^0.19.0",
     "bcryptjs": "^2.4.3",
+    "concurrently": "^5.2.0",
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "express-validator": "^6.1.1",
+    "if-env": "^1.0.4",
     "mongoose": "^5.6.4",
     "morgan": "^1.9.1",
     "nodemailer": "^6.2.1"

@@ -16,16 +16,6 @@ const UserSchema = new mongoose.Schema({
     unique: true,
     match: [/.+@.+\..+/, 'Please enter a valid-email address']
   },
-  password: {
-    type: String,
-    required: true,
-    validate: [
-      input => {
-        return input.length >= 6;
-      },
-      'Password must be at least 6 characters long'
-    ]
-  },
   date_created: {
     type: Date,
     default: Date.now
